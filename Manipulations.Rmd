@@ -4,13 +4,13 @@ author: "Brett Graham"
 date: "3/23/2018"
 output: html_document
 ---
-
-
+Simplifying & joining raw datas
 ```{r}
 #Simplifies the indeed into the job, state, and number of clicks/ applications  
 simplifiedIndeed <- indeedData %>%
   select(c("jobHash","admin1","clicks","applies"))
 ```
+
 ```{r}
 #Summarizes by job postings
 sumJobs <- simplifiedIndeed %>%
@@ -35,7 +35,7 @@ stateCensus2015 <- tempCensus2015 %>%
             avgMedIncome = sum((Income*TotalPop)/statePopulation), 
             statePoverty = sum((Poverty*TotalPop)/statePopulation), 
             stateUnemployment = sum((Unemployment*TotalPop)/statePopulation)) %>%
-  left_join(states, by = c("State"="State"))
+  inner_join(states, by = c("State"="State"))
 ```
 
 ```{r}
@@ -44,7 +44,16 @@ indeedState <- sumState %>%
   inner_join(stateCensus2015,by = c("admin1"="Abbreviation")) %>%
   subset(select=c(-State)) %>%
   rename(State = admin1)
-
 ```
 
+
+Data manipulations
+
+```{r}
+#Basic manipulations to observe click density
+indeedState<-indeedState%>%
+  mutate(stateUnemployment = stateUnemployment*.01)%>%
+  mutate(clickPerPerson = stateClicks/statePopulation) %>%
+  mutate(clicksPerUnemployed = stateClicks/(statePopulation*stateUnemployment))
+```
 
