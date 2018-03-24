@@ -62,3 +62,29 @@ indeedState<-indeedStateRaw%>%
 ```
 
 
+```{r}
+# Creating list that contains the IDs for census variables (Unemployed in labor force, poverty status, population Total, pop In Labor Force)
+census_variables <- c("C18120_006E", "B17021_001E", "B01003_001E", "B23025_002E")
+
+# Creating table using tidycensus for each zipcode
+tidycensusPopulationInfo <- 
+  get_acs(geography = "zip code tabulation area", variables = census_variables) 
+```
+```{r}
+# Tidying up the data to include unemployment rate, poverty rate as well as change column names to be more descriptive
+zipCodeInfo <- tidycensusPopulationInfo %>%
+  select(GEOID, variable, estimate) %>%
+  spread(key= "variable", value = "estimate") %>%
+  rename(unemployedInLaborForce = C18120_006, 
+         povertyStatus = B17021_001, 
+         populationTotal = B01003_001,
+         popInLaborForce = B23025_002) %>% 
+  mutate(unemploymentRate = unemployedInLaborForce/popInLaborForce,
+         povertyRate = povertyStatus/populationTotal)
+
+
+zipCodeInfo <- zipCodeInfo[complete.cases(zipCodeInfo),]
+
+```
+
+
