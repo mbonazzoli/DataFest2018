@@ -54,6 +54,7 @@ Data manipulations
 #Basic manipulations to observe click density
 indeedState<-indeedStateRaw%>%
    mutate(stateUnemployment = stateUnemployment*.01,
+          unemployedPersons = stateUnemployment*statePopulation,
           statePoverty = .01*statePoverty,
           clickPerPerson = stateClicks/statePopulation,
           clicksPerUnemployed = stateClicks/(statePopulation*stateUnemployment),
