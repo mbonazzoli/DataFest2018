@@ -5,4 +5,7 @@ date: "3/23/2018"
 output: html_document
 ---
 
-WHat is up my dudes
+```{r}
+indeedData <- read.csv(dataFestReleaseFinal_3_23")
+
+```
