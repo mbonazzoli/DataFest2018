@@ -7,16 +7,24 @@ output: html_document
 
 
 ```{r}
+#Simplifies the indeed into the job, state, and number of clicks/ applications  
 simplifiedIndeed <- indeedData %>%
   select(c("jobHash","admin1","clicks","applies"))
 
 ```
 ```{r}
-
+#Summarizes by job postings
 sumJobs <- simplifiedIndeed %>%
   group_by(jobHash, admin1)%>%
   summarize(totalClicks = sum(clicks),totalApplies = sum(applies))
   
+```
+```{r}
+#summarizes state click info
+sumState <-sumJobs %>%
+  group_by(admin1) %>%
+  summarise(stateClicks = sum(totalClicks),stateApplies = sum(totalApplies)) %>%
+  mutate(appliesPerClick = stateApplies/stateClicks)
   
   
 ```
