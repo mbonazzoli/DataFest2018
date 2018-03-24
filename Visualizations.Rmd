@@ -11,8 +11,11 @@ ggplot(indeedState, aes(x= stateClicks, y=stateApplies, label=State)) + geom_poi
 ```
 Linear relationship between clicks and stateApplies, more clicks more applies. Applies per click is standard across states.
 
-```{r}
-
-```
 
 Populaton concentration impacts need for indeed?
+```{r}
+# Visualization of clicks per unemployed people in state
+ggplot(indeedState, aes(x= State, y = clicksPerUnemployed)) + geom_col()
+
+
+```
