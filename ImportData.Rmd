@@ -4,8 +4,15 @@ author: "Brett Graham"
 date: "3/23/2018"
 output: html_document
 ---
+```{r}
+library(readr)
+library(tidyverse)
+
+
+```
+
 
 ```{r}
-indeedData <- read.csv(dataFestReleaseFinal_3_23")
+indeedData <- read_csv("dataFestReleaseFinal_3_23.csv")
 
 ```
