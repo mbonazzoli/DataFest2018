@@ -5,8 +5,3 @@ date: "3/23/2018"
 output: html_document
 ---
 
-```{r}
-ggplot(sumJobs, aes(x=count))
-
-
-```

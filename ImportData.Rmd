@@ -14,7 +14,13 @@ library(tidycensus)
 
 ```{r}
 indeedData <- read_csv("dataFestReleaseFinal_3_23.csv")
+```
 
+```{r}
 tempCensus2015 <- read_csv("acs2015_county_data.csv")
 
+```
+
+```{r}
+states <- read_csv("states.csv")
 ```
