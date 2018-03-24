@@ -8,7 +8,11 @@ output: html_document
 library(readr)
 library(tidyverse)
 library(tidycensus)
+```
 
+```{r}
+# inputting census key
+census_api_key("f124790bc15b3d6f1ddf10a31126dbd7ef03e590", install = TRUE)
 ```
 
 
