@@ -28,6 +28,8 @@ groupedIndeed <- indeedData %>%
 
 ```
 ```{r}
+# census data grouped by state and summarized for population, empoloyment,
+# unemployment, income,  and poverty
 stateCensus2015 <- tempCensus2015 %>%
   group_by(State) %>%
   summarise(statePopulation = sum(TotalPop), 
@@ -36,4 +38,6 @@ stateCensus2015 <- tempCensus2015 %>%
             stateEmployment = sum((Employed*TotalPop)/statePopulation), 
             stateUnemployment = sum((Unemployment*TotalPop)/statePopulation))
 ```
+
+
 
