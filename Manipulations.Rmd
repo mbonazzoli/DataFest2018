@@ -27,3 +27,13 @@ groupedIndeed <- indeedData %>%
   summarise_all()
 
 ```
+```{r}
+stateCensus2015 <- tempCensus2015 %>%
+  group_by(State) %>%
+  summarise(statePopulation = sum(TotalPop), 
+            avgMedIncome = sum((Income*TotalPop)/statePopulation), 
+            statePoverty = sum((Poverty*TotalPop)/statePopulation), 
+            stateEmployment = sum((Employed*TotalPop)/statePopulation), 
+            stateUnemployment = sum((Unemployment*TotalPop)/statePopulation))
+```
+
