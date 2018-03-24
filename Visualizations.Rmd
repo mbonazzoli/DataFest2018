@@ -4,4 +4,15 @@ author: "Brett Graham"
 date: "3/23/2018"
 output: html_document
 ---
+### Matt's Chunks for visualization
+```{r}
+# Relationship between clicks and applies per state
+ggplot(indeedState, aes(x= stateClicks, y=stateApplies, label=State)) + geom_point() + geom_text(aes(label=State), hjust= 0, vjust = 0, alpha=0.5)
+```
+Linear relationship between clicks and stateApplies, more clicks more applies. Applies per click is standard across states.
 
+```{r}
+
+```
+
+Populaton concentration impacts need for indeed?
