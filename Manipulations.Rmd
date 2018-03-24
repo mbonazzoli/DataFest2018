@@ -15,15 +15,15 @@ simplifiedIndeed <- indeedData %>%
 #Summarizes by job postings
 sumJobs <- simplifiedIndeed %>%
   group_by(jobHash, admin1)%>%
-  summarize(totalClicks = sum(clicks),totalApplies = sum(applies))
+  summarize(totalClicks = sum(clicks),totalApplies = sum(applies),count = n())
 ```
 
 ```{r}
 #summarizes state click info
 sumState <-sumJobs %>%
   group_by(admin1) %>%
-  summarise(stateClicks = sum(totalClicks),stateApplies = sum(totalApplies)) %>%
-  mutate(appliesPerClick = stateApplies/stateClicks)
+  summarise(stateClicks = sum(totalClicks),stateApplies = sum(totalApplies),jobPostings = sum(count)) %>%
+  mutate(appliesPerClick = stateApplies/stateClicks, clicksPerPosting = stateClicks/jobPostings)
   
   
 ```
@@ -42,7 +42,7 @@ stateCensus2015 <- tempCensus2015 %>%
 
 ```{r}
 #Merge State Indeed data with census data
-indeedState <- sumState %>%
+indeedStateRaw <- sumState %>%
   inner_join(stateCensus2015,by = c("admin1"="Abbreviation")) %>%
   subset(select=c(-State)) %>%
   rename(State = admin1)
@@ -52,9 +52,38 @@ Data manipulations
 
 ```{r}
 #Basic manipulations to observe click density
-indeedState<-indeedState%>%
-  mutate(stateUnemployment = stateUnemployment*.01)%>%
-  mutate(clickPerPerson = stateClicks/statePopulation) %>%
-  mutate(clicksPerUnemployed = stateClicks/(statePopulation*stateUnemployment))
+indeedState<-indeedStateRaw%>%
+   mutate(stateUnemployment = stateUnemployment*.01,
+          statePoverty = .01*statePoverty,
+          clickPerPerson = stateClicks/statePopulation,
+          clicksPerUnemployed = stateClicks/(statePopulation*stateUnemployment),
+          clicksPerImpoverished = stateClicks/(statePopulation*statePoverty))
 ```
+
+
+```{r}
+# Creating list that contains the IDs for census variables (Unemployed in labor force, poverty status, population Total, pop In Labor Force)
+census_variables <- c("C18120_006E", "B17021_001E", "B01003_001E", "B23025_002E")
+
+# Creating table using tidycensus for each zipcode
+tidycensusPopulationInfo <- 
+  get_acs(geography = "zip code tabulation area", variables = census_variables) 
+```
+```{r}
+# Tidying up the data to include unemployment rate, poverty rate as well as change column names to be more descriptive
+zipCodeInfo <- tidycensusPopulationInfo %>%
+  select(GEOID, variable, estimate) %>%
+  spread(key= "variable", value = "estimate") %>%
+  rename(unemployedInLaborForce = C18120_006, 
+         povertyStatus = B17021_001, 
+         populationTotal = B01003_001,
+         popInLaborForce = B23025_002) %>% 
+  mutate(unemploymentRate = unemployedInLaborForce/popInLaborForce,
+         povertyRate = povertyStatus/populationTotal)
+
+
+zipCodeInfo <- zipCodeInfo[complete.cases(zipCodeInfo),]
+
+```
+
 
