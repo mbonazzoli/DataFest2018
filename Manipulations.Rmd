@@ -29,6 +29,8 @@ sumState <-sumJobs %>%
 ```
 
 ```{r}
+# census data grouped by state and summarized for population, empoloyment,
+# unemployment, income,  and poverty
 stateCensus2015 <- tempCensus2015 %>%
   group_by(State) %>%
   summarise(statePopulation = sum(TotalPop), 
@@ -45,7 +47,6 @@ indeedState <- sumState %>%
   subset(select=c(-State)) %>%
   rename(State = admin1)
 ```
-
 
 Data manipulations
 
