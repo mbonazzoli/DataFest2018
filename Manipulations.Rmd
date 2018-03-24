@@ -10,15 +10,14 @@ output: html_document
 #Simplifies the indeed into the job, state, and number of clicks/ applications  
 simplifiedIndeed <- indeedData %>%
   select(c("jobHash","admin1","clicks","applies"))
-
 ```
 ```{r}
 #Summarizes by job postings
 sumJobs <- simplifiedIndeed %>%
   group_by(jobHash, admin1)%>%
   summarize(totalClicks = sum(clicks),totalApplies = sum(applies))
-  
 ```
+
 ```{r}
 #summarizes state click info
 sumState <-sumJobs %>%
@@ -28,20 +27,24 @@ sumState <-sumJobs %>%
   
   
 ```
-```{r}
 
-groupedIndeed <- indeedData %>%
-  group_by(jobHash) %>%
-  summarise_all()
-
-```
 ```{r}
 stateCensus2015 <- tempCensus2015 %>%
   group_by(State) %>%
   summarise(statePopulation = sum(TotalPop), 
             avgMedIncome = sum((Income*TotalPop)/statePopulation), 
             statePoverty = sum((Poverty*TotalPop)/statePopulation), 
-            stateEmployment = sum((Employed*TotalPop)/statePopulation), 
-            stateUnemployment = sum((Unemployment*TotalPop)/statePopulation))
+            stateUnemployment = sum((Unemployment*TotalPop)/statePopulation)) %>%
+  left_join(states, by = c("State"="State"))
 ```
+
+```{r}
+#Merge State Indeed data with census data
+indeedState <- sumState %>%
+  inner_join(stateCensus2015,by = c("admin1"="Abbreviation")) %>%
+  subset(select=c(-State)) %>%
+  rename(State = admin1)
+
+```
+
 
