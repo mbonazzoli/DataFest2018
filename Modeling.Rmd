@@ -37,8 +37,8 @@ indeedCity <- indeedCity %>%
   bind_cols(model)
 
 
-
 ```
+
 
 
 

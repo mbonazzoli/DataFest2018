@@ -38,6 +38,7 @@ newZipWithCityInfo <- censusInfoForZipCode %>%
 
 newZipWithCityInfo <-newZipWithCityInfo[,c(9,10,1,2:8,11:12)]
 newZipWithCityInfo <-newZipWithCityInfo[newZipWithCityInfo$State != "PR", ]
+newZipWithCityInfo <-newZipWithCityInfo[!is.na(newZipWithCityInfo$medianIncome),]
 ```
 
 ```{r}
@@ -150,7 +151,7 @@ intAccEnhanced <- internetAccess2016 %>%
 
 Data Manipulations
 ```{r}
-indeedState <- indeedState %>%
+indeedState <- indeedStateRaw %>%
   mutate(jobsPerUnemployed = jobPostings/unemployedPop)
 ```
 
