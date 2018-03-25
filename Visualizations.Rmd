@@ -43,12 +43,23 @@ map<-get_map(location=myLocation, zoom = 3, maptype = "terrain",
 
 meanRes <- mean(indeedCity$Residual)
 
-ggmap(map) + geom_point(data = filtIndeedCity, aes(x = long, y = lat, size =  log(abs(Residual)), colour = Residual)) +
+ggmap(data = filtIndeedCity, ggmap = map, aes(x = long,
+                 y = lat, 
+                 label = city,
+                 size =  log(abs(Residual)), 
+                 colour = Residual
+                 )) + 
+  geom_point() +
+  geom_text(position = 'nudge', alpha = 0.5) +
   scale_size(range = c(0.5, 7)) + 
-  scale_colour_gradient2(midpoint = meanRes, low = 'red', mid = 'white', high = 'blue') + 
+  scale_colour_gradient2(midpoint = meanRes, 
+                         low = 'red', 
+                         mid = 'white', 
+                         high = 'blue') + 
   scale_size(range = c(0, 8)) + 
   scale_x_continuous(limits = lon, expand = c(0,0)) + 
-  scale_y_continuous(limits = lat, expand = c(0,0))
+  scale_y_continuous(limits = lat, expand = c(0,0)) 
+  
 
 ```
 
