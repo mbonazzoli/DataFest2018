@@ -38,7 +38,7 @@ fit <- as.data.frame(clickModel$fitted.values)
 model <- cbind(fit,resids)
 colnames(model) <- c("Prediction","Residual")
 
-indeedCityModel <- indeedCity %>%
+indeedCityModel <- indeedCityModel %>%
   bind_cols(model)
 ```
 ```{r}
