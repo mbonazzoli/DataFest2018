@@ -7,7 +7,7 @@ output: html_document
 Simplifying & joining raw datas
 ```{r}
 # Creating list that contains the IDs for census variables (Unemployed in labor force, poverty status, population Total, pop In Labor Force)
-census_variables <- c("C18120_006E", "B17021_001E", "B01003_001E", "B23025_002E", "B06011_001E")
+census_variables <- c("C18120_006E", "B17021_001E", "B01003_001E", "B23025_002E", "B06011_001E", "C02003_004E", "C02003_003E")
 
 # Creating table using tidycensus for each zipcode
 tidycensusPopulationInfo <- 
@@ -22,7 +22,9 @@ censusInfoForZipCode <- tidycensusPopulationInfo %>%
          povertyStatus = B17021_001, 
          populationTotal = B01003_001,
          popInLaborForce = B23025_002,
-         medianIncome = B06011_001) %>% 
+         medianIncome = B06011_001, 
+         raceBlack = C02003_004,
+         raceWhite = C02003_003) %>% 
   mutate(unemploymentRate = unemployedInLaborForce/popInLaborForce,
          povertyRate = povertyStatus/populationTotal)
 ```
@@ -36,7 +38,7 @@ zipCodeDataClean <- zipCodeData %>%
 newZipWithCityInfo <- censusInfoForZipCode %>%
   left_join(zipCodeDataClean, by = c("GEOID" = "Zipcode"))
 
-newZipWithCityInfo <-newZipWithCityInfo[,c(9,10,1,2:8,11:12)]
+newZipWithCityInfo <-newZipWithCityInfo[,c(11,12,1,2:10,13:14)]
 newZipWithCityInfo <-newZipWithCityInfo[newZipWithCityInfo$State != "PR", ]
 ```
 
@@ -45,6 +47,8 @@ cityUnemployment <- newZipWithCityInfo %>%
   group_by(City,State) %>%
   summarize(medianIncome = sum((medianIncome*populationTotal)/sum(populationTotal)),
          populationTotal=sum(populationTotal),
+         populationWhite = sum(raceWhite),
+         populationBlack = sum(raceBlack),
          popInLaborForce=sum(popInLaborForce),
          unemployedPop = sum(unemployedInLaborForce),
          unemploymentRate = unemployedPop/popInLaborForce,
@@ -166,8 +170,9 @@ indeedCity <- indeedCity[indeedCity$unemployedPop!=0,]
 ```
 
 ```{r}
-# Filtering for visualization
-# filtIndeedCity <- 
+# Filtering for visualization (NEED TO RUN RESIDUAL IN MODELING.RMD)
+filtIndeedCity <- indeedCity %>%
+  filter(Residual > 20000 | Residual < -20000)
 ```
 
 

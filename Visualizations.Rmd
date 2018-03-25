@@ -34,7 +34,7 @@ map<-get_map(location=myLocation, zoom = 4, maptype = "roadmap",
 
 
 meanRes <- mean(indeedCity$Residual)
-ggmap(map) + geom_point(data = indeedCity, aes(x = long, y = lat, size =  log(abs(Residual)), colour = Residual), alpha = 0.5) + scale_size(range = c(0.5, 7)) + scale_colour_gradient2(midpoint = meanRes, low = 'red', mid = 'white', high = 'blue') + scale_size(range = c(0, 8))
+ggmap(map) + geom_point(data = filtIndeedCity, aes(x = long, y = lat, size =  log(abs(Residual)), colour = Residual)) + scale_size(range = c(0.5, 7)) + scale_colour_gradient2(midpoint = meanRes, low = 'red', mid = 'white', high = 'blue') + scale_size(range = c(0, 8))
 
 ```
 
