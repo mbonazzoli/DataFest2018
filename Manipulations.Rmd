@@ -162,7 +162,8 @@ indeedState <- indeedStateRaw %>%
 ```{r}
 indeedCity <- indeedCityRaw %>%
   # left_join(intAccEnhanced,by = c("city"="City")) %>%
-  mutate(jobsPerUnemployed = jobPostings/unemployedPop) 
+  mutate(jobsPerUnemployed = jobPostings/unemployedPop) %>%
+  mutate(percentBlack = populationBlack/populationTotal)
 # %>%
 #   mutate(unemploymentRate = unemployedPop/popInLaborForce)
 
@@ -170,11 +171,7 @@ indeedCity <- indeedCity[indeedCity$unemployedPop!=0,]
 
 ```
 
-```{r}
-# Filtering for visualization (NEED TO RUN RESIDUAL IN MODELING.RMD)
-filtIndeedCity <- indeedCity %>%
-  filter(Residual > 20000 | Residual < -20000)
-```
+
 
 
 ```{r}

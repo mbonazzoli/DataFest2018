@@ -23,7 +23,7 @@ summary(clickModelBasic)
 ```
 
 ```{r}
-clickModel <- lm(cityClicks ~jobPostings + unemployedPop + jobsPerUnemployed,data= indeedCity)
+clickModel <- lm(cityClicks ~jobPostings + unemployedPop + percentBlack,data= indeedCity)
 clickResid <- resid(clickModel)
 summary(clickModel)
 # clickModel$residuals
@@ -33,7 +33,7 @@ fit <- as.data.frame(clickModel$fitted.values)
 model <- cbind(fit,resids)
 colnames(model) <- c("Prediction","Residual")
 
-indeedCity <- indeedCity %>%
+indeedCityModel <- indeedCity %>%
   bind_cols(model)
 
 
