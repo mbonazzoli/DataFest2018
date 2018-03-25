@@ -33,3 +33,7 @@ states <- read_csv("states.csv")
 zipCodeData <- read_csv("free-zipcode-database-Primary.csv")
 ```
 
+```{r}
+internetAccess <- read_csv("intaccess.csv")
+```
+
