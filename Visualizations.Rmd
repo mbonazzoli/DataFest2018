@@ -3,7 +3,7 @@ title: "Visualizations"
 author: "Brett Graham"
 date: "3/23/2018"
 output: html_document
----
+--- 
 ### Matt's Chunks for visualization
 ```{r}
 # Relationship between clicks and applies per state
