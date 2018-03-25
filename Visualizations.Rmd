@@ -3,7 +3,7 @@ title: "Visualizations"
 author: "Brett Graham"
 date: "3/23/2018"
 output: html_document
----
+--- 
 ### Matt's Chunks for visualization
 ```{r}
 # Relationship between clicks and applies per state
@@ -16,4 +16,11 @@ Populaton concentration impacts need for indeed?
 ```{r}
 # Visualization of clicks per unemployed people in state
 ggplot(indeedState, aes(x= State, y = clicksPerUnemployed)) + geom_col()
+```
+
+
+```{r}
+# Visualization of clicks per unemployed people in state
+ggplot(indeedState, aes(x= jobPostings, y = stateClicks)) + 
+  geom_point() 
 ```

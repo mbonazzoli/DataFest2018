@@ -61,17 +61,29 @@ stateUnemployment <-newZipWithCityInfo %>%
          long = mean(Long))
 ```
 
+Modifying Indeed Data
+
 ```{r}
 #Simplifies the indeed into the job, state, and number of clicks/ applications  
 simplifiedIndeed <- indeedData %>%
-  select(c("jobHash","admin1","clicks","applies"))
+  select(c("jobHash","admin1","city","clicks","applies"))
 ```
 
 ```{r}
 #Summarizes by job postings
 sumJobs <- simplifiedIndeed %>%
-  group_by(jobHash, admin1)%>%
+  group_by(jobHash, admin1,city)%>%
   summarize(totalClicks = sum(clicks),totalApplies = sum(applies),count = n())
+```
+
+```{r}
+#summarizes state click info
+sumCity <-sumJobs %>%
+  group_by(admin1,city) %>%
+  summarise(stateClicks = sum(totalClicks),stateApplies = sum(totalApplies),jobPostings = sum(count)) %>%
+  mutate(appliesPerClick = stateApplies/stateClicks, clicksPerPosting = stateClicks/jobPostings)
+  
+  
 ```
 
 ```{r}
@@ -84,7 +96,7 @@ sumState <-sumJobs %>%
   
 ```
 
-```{r}
+```
 # census data grouped by state and summarized for population, empoloyment,
 # unemployment, income,  and poverty
 stateCensus2015 <- tempCensus2015 %>%
@@ -95,26 +107,26 @@ stateCensus2015 <- tempCensus2015 %>%
             stateUnemployment = sum((Unemployment*TotalPop)/statePopulation)) %>%
   inner_join(states, by = c("State"="State"))
 ```
+```{r}
+indeedCityRaw <- sumCity %>%
+  left_join(cityUnemployment,by = c("city"="City"))%>%
+  subset(select=c(-State)) %>%
+  rename(State=admin1)
+  
+```
 
 ```{r}
 #Merge State Indeed data with census data
 indeedStateRaw <- sumState %>%
-  inner_join(stateCensus2015,by = c("admin1"="Abbreviation")) %>%
-  subset(select=c(-State)) %>%
+  inner_join(stateUnemployment,by = c("admin1"="State")) %>%
   rename(State = admin1)
 ```
 
-Data manipulations
 
+Data Manipulations
 ```{r}
-#Basic manipulations to observe click density
-indeedState<-indeedStateRaw%>%
-   mutate(stateUnemployment = stateUnemployment*.01,
-          unemployedPersons = stateUnemployment*statePopulation,
-          statePoverty = .01*statePoverty,
-          clickPerPerson = stateClicks/statePopulation,
-          clicksPerUnemployed = stateClicks/(statePopulation*stateUnemployment),
-          clicksPerImpoverished = stateClicks/(statePopulation*statePoverty))
+indeedState <- indeedState %>%
+  mutate(jobsPerUnemployed = jobPostings/unemployedPop)
 ```
 
 ```{r}
@@ -122,6 +134,6 @@ indeedState<-indeedStateRaw%>%
 # internetAccess2016 <- internetAccess %>%
 #   transmute(percHouseWithInt = 
 #               substr(percentHouseholdWithIntAcc, 0, length(percentHouseholdWithIntAcc)-2))
-
-  # mutate(expectedInternetUse = (1-((1-percHouseWithInt)/2)))
+#
+# mutate(expectedInternetUse = (1-((1-percHouseWithInt)/2)))
 ```
