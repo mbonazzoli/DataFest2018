@@ -172,8 +172,6 @@ indeedCity <- indeedCity[indeedCity$unemployedPop!=0,]
 ```
 
 
-
-
 ```{r}
 write_csv(indeedCity,"indeedCity.csv")
 ```

@@ -28,13 +28,27 @@ ggplot(indeedState, aes(x= jobPostings, y = stateClicks)) +
 
 Map of U.S. with residual based on model (details filled in by brett) glyphs sized for city population placed in city location
 ```{r}
-myLocation <- c(-130, 25, -60, 55)
-map<-get_map(location=myLocation, zoom = 4, maptype = "roadmap",
+# Filtering for visualization (NEED TO RUN RESIDUAL IN MODELING.RMD)
+filtIndeedCity <- indeedCity %>%
+  filter(Residual > 17000 | Residual < -17000)
+```
+
+```{r}
+lon <- c(-130, -60)
+lat <- c(20, 55)
+
+myLocation <- c(lon = mean(lon), lat = mean(lat))
+map<-get_map(location=myLocation, zoom = 3, maptype = "terrain",
              source='google', color = 'color')
 
-
 meanRes <- mean(indeedCity$Residual)
-ggmap(map) + geom_point(data = filtIndeedCity, aes(x = long, y = lat, size =  log(abs(Residual)), colour = Residual)) + scale_size(range = c(0.5, 7)) + scale_colour_gradient2(midpoint = meanRes, low = 'red', mid = 'white', high = 'blue') + scale_size(range = c(0, 8))
+
+ggmap(map) + geom_point(data = filtIndeedCity, aes(x = long, y = lat, size =  log(abs(Residual)), colour = Residual)) +
+  scale_size(range = c(0.5, 7)) + 
+  scale_colour_gradient2(midpoint = meanRes, low = 'red', mid = 'white', high = 'blue') + 
+  scale_size(range = c(0, 8)) + 
+  scale_x_continuous(limits = lon, expand = c(0,0)) + 
+  scale_y_continuous(limits = lat, expand = c(0,0))
 
 ```
 
