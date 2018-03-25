@@ -130,50 +130,7 @@ indeedCity <- indeedCityRaw %>%
 ```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-=======
+```{r}
 # Modifying internet access by city data to extrapolate to 2016
 internetAccess2016 <- internetAccess %>%
   mutate(expPercInternetUse = (1-((1- (percentHouseholdsWithIntAcc/100))/2))) %>%
