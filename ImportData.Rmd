@@ -12,7 +12,7 @@ library(tidycensus)
 
 ```{r}
 # inputting census key
-census_api_key("f124790bc15b3d6f1ddf10a31126dbd7ef03e590")
+census_api_key("f124790bc15b3d6f1ddf10a31126dbd7ef03e590",install=TRUE)
 ```
 
 
@@ -31,5 +31,9 @@ states <- read_csv("states.csv")
 
 ```{r}
 zipCodeData <- read_csv("free-zipcode-database-Primary.csv")
+```
+
+```{r}
+internetAccess <- read_csv("internetAccessCities.csv")
 ```
 
