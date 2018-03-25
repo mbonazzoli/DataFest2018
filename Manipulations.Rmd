@@ -6,17 +6,78 @@ output: html_document
 ---
 Simplifying & joining raw datas
 ```{r}
+# Creating list that contains the IDs for census variables (Unemployed in labor force, poverty status, population Total, pop In Labor Force)
+census_variables <- c("C18120_006E", "B17021_001E", "B01003_001E", "B23025_002E")
+
+# Creating table using tidycensus for each zipcode
+tidycensusPopulationInfo <- 
+  get_acs(geography = "zip code tabulation area", variables = census_variables) 
+```
+```{r}
+# Tidying up the data to include unemployment rate, poverty rate as well as change column names to be more descriptive
+censusInfoForZipCode <- tidycensusPopulationInfo %>%
+  select(GEOID, variable, estimate) %>%
+  spread(key= "variable", value = "estimate") %>%
+  rename(unemployedInLaborForce = C18120_006, 
+         povertyStatus = B17021_001, 
+         populationTotal = B01003_001,
+         popInLaborForce = B23025_002) %>% 
+  mutate(unemploymentRate = unemployedInLaborForce/popInLaborForce,
+         povertyRate = povertyStatus/populationTotal)
+```
+
+```{r}
+# cleaning zipCode
+zipCodeDataClean <- zipCodeData %>%
+  select(Zipcode, City, State, Lat, Long)
+
+# merging zipcode and city data with zipCodeInfo
+newZipWithCityInfo <- censusInfoForZipCode %>%
+  left_join(zipCodeDataClean, by = c("GEOID" = "Zipcode"))
+
+newZipWithCityInfo <-newZipWithCityInfo[,c(8,9,1,2:7,10:11)]
+newZipWithCityInfo <-newZipWithCityInfo[newZipWithCityInfo$State != "PR", ]
+```
+
+```{r}
+cityUnemployment <- newZipWithCityInfo %>%
+  group_by(City,State) %>%
+  summarize(populationTotal=sum(populationTotal),
+         popInLaborForce=sum(popInLaborForce),
+         unemployedPop = sum(unemployedInLaborForce),
+         unemploymentRate = unemployedPop/popInLaborForce,
+         lat = mean(Lat),
+         long = mean(Long))
+```
+
+```{r}
+stateUnemployment <-newZipWithCityInfo %>%
+  group_by(State) %>%
+  summarize(populationTotal=sum(populationTotal),
+         popInLaborForce=sum(popInLaborForce),
+         unemployedPop = sum(unemployedInLaborForce),
+         unemploymentRate = unemployedPop/popInLaborForce,
+         lat = mean(Lat),
+         long = mean(Long))
+```
+
+```{r}
 #Simplifies the indeed into the job, state, and number of clicks/ applications  
 simplifiedIndeed <- indeedData %>%
-  select(c("jobHash","admin1","clicks","applies"))
+  select(c("jobHash","admin1","city","clicks","applies"))
 ```
 
 ```{r}
 #Summarizes by job postings
 sumJobs <- simplifiedIndeed %>%
-  group_by(jobHash, admin1)%>%
+  group_by(jobHash, admin1,city)%>%
   summarize(totalClicks = sum(clicks),totalApplies = sum(applies),count = n())
 ```
+
+```{r}
+
+```
+
 
 ```{r}
 #summarizes state click info
@@ -54,6 +115,7 @@ Data manipulations
 #Basic manipulations to observe click density
 indeedState<-indeedStateRaw%>%
    mutate(stateUnemployment = stateUnemployment*.01,
+          unemployedPersons = stateUnemployment*statePopulation,
           statePoverty = .01*statePoverty,
           clickPerPerson = stateClicks/statePopulation,
           clicksPerUnemployed = stateClicks/(statePopulation*stateUnemployment),
@@ -61,29 +123,51 @@ indeedState<-indeedStateRaw%>%
 ```
 
 
-```{r}
-# Creating list that contains the IDs for census variables (Unemployed in labor force, poverty status, population Total, pop In Labor Force)
-census_variables <- c("C18120_006E", "B17021_001E", "B01003_001E", "B23025_002E")
-
-# Creating table using tidycensus for each zipcode
-tidycensusPopulationInfo <- 
-  get_acs(geography = "zip code tabulation area", variables = census_variables) 
-```
-```{r}
-# Tidying up the data to include unemployment rate, poverty rate as well as change column names to be more descriptive
-zipCodeInfo <- tidycensusPopulationInfo %>%
-  select(GEOID, variable, estimate) %>%
-  spread(key= "variable", value = "estimate") %>%
-  rename(unemployedInLaborForce = C18120_006, 
-         povertyStatus = B17021_001, 
-         populationTotal = B01003_001,
-         popInLaborForce = B23025_002) %>% 
-  mutate(unemploymentRate = unemployedInLaborForce/popInLaborForce,
-         povertyRate = povertyStatus/populationTotal)
 
 
-zipCodeInfo <- zipCodeInfo[complete.cases(zipCodeInfo),]
 
-```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
