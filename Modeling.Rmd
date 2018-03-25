@@ -23,7 +23,12 @@ summary(clickModelBasic)
 ```
 
 ```{r}
-clickModel <- lm(cityClicks ~jobPostings + unemployedPop + percentBlack,data= indeedCity)
+indeedCityModel<-indeedCity %>%
+  filter(populationBlack>0) %>%
+  filter(unemployedPop>0)
+
+
+clickModel <- lm(cityClicks ~jobPostings + unemployedPop + percentBlack,data= indeedCityModel)
 clickResid <- resid(clickModel)
 summary(clickModel)
 # clickModel$residuals
@@ -35,31 +40,12 @@ colnames(model) <- c("Prediction","Residual")
 
 indeedCityModel <- indeedCity %>%
   bind_cols(model)
-
+```
+```{r}
+ggplot(data=indeedCityModel,mapping = aes(x=cityClicks,y=Residual))+geom_point()
 
 ```
 
 
 
-
-
-
-
-
-
-
-
-
-Dependent:
-Average clicks per posting
-
-Independent:
-Days of ad on site
-Number of job posting
-
-
-Dependent:
-Average applies per posting
-
-Independent:
 
