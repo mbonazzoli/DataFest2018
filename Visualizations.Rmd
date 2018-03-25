@@ -24,3 +24,14 @@ ggplot(indeedState, aes(x= State, y = clicksPerUnemployed)) + geom_col()
 ggplot(indeedState, aes(x= jobPostings, y = stateClicks)) + 
   geom_point() 
 ```
+
+
+Map of U.S. with residual based on model (details filled in by brett) glyphs sized for city population placed in city location
+```{r}
+myLocation <- "united states"
+map<-get_map(location='united states', zoom = 4, maptype = "roadmap",
+             source='google', color = 'color')
+ggmap(map)
+
+```
+

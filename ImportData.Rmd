@@ -8,6 +8,8 @@ output: html_document
 library(readr)
 library(tidyverse)
 library(tidycensus)
+library(ggmap)
+library(ggplot2)
 ```
 
 ```{r}

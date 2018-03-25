@@ -7,7 +7,7 @@ output: html_document
 Simplifying & joining raw datas
 ```{r}
 # Creating list that contains the IDs for census variables (Unemployed in labor force, poverty status, population Total, pop In Labor Force)
-census_variables <- c("C18120_006E", "B17021_001E", "B01003_001E", "B23025_002E")
+census_variables <- c("C18120_006E", "B17021_001E", "B01003_001E", "B23025_002E", "B06011_001E")
 
 # Creating table using tidycensus for each zipcode
 tidycensusPopulationInfo <- 
@@ -21,7 +21,8 @@ censusInfoForZipCode <- tidycensusPopulationInfo %>%
   rename(unemployedInLaborForce = C18120_006, 
          povertyStatus = B17021_001, 
          populationTotal = B01003_001,
-         popInLaborForce = B23025_002) %>% 
+         popInLaborForce = B23025_002,
+         medianIncome = B06011_001) %>% 
   mutate(unemploymentRate = unemployedInLaborForce/popInLaborForce,
          povertyRate = povertyStatus/populationTotal)
 ```
@@ -35,14 +36,15 @@ zipCodeDataClean <- zipCodeData %>%
 newZipWithCityInfo <- censusInfoForZipCode %>%
   left_join(zipCodeDataClean, by = c("GEOID" = "Zipcode"))
 
-newZipWithCityInfo <-newZipWithCityInfo[,c(8,9,1,2:7,10:11)]
+newZipWithCityInfo <-newZipWithCityInfo[,c(9,10,1,2:8,11:12)]
 newZipWithCityInfo <-newZipWithCityInfo[newZipWithCityInfo$State != "PR", ]
 ```
 
 ```{r}
 cityUnemployment <- newZipWithCityInfo %>%
   group_by(City,State) %>%
-  summarize(populationTotal=sum(populationTotal),
+  summarize(medianIncome = sum((medianIncome*populationTotal)/sum(populationTotal)),
+         populationTotal=sum(populationTotal),
          popInLaborForce=sum(popInLaborForce),
          unemployedPop = sum(unemployedInLaborForce),
          unemploymentRate = unemployedPop/popInLaborForce,
@@ -77,21 +79,37 @@ sumJobs <- simplifiedIndeed %>%
 ```
 
 ```{r}
+# #summarizes state click info
+# sumCity <-sumJobs %>%
+#   mutate(city = toupper(city)) %>%
+#   inner_join(cityUnemployment,by = c("city"="City"))%>%
+#   group_by(admin1,city) %>%
+#   summarise(cityClicks = sum(totalClicks),
+#             cityApplies = sum(totalApplies),
+#             jobPostings = n(),
+#             populationTotal = sum(populationTotal),
+#             popInLaborForce = sum(popInLaborForce),
+#             unemployedPop = sum(unemployedPop))%>%
+#   mutate(appliesPerClick = cityApplies/cityClicks, clicksPerPosting = cityClicks/jobPostings)
+#   
+#   
+```
+
+```{r}
 #summarizes state click info
 sumCity <-sumJobs %>%
   mutate(city = toupper(city)) %>%
-  inner_join(cityUnemployment,by = c("city"="City"))%>%
   group_by(admin1,city) %>%
   summarise(cityClicks = sum(totalClicks),
             cityApplies = sum(totalApplies),
-            jobPostings = n(),
-            populationTotal = sum(populationTotal),
-            popInLaborForce = sum(popInLaborForce),
-            unemployedPop = sum(unemployedPop))%>%
-  mutate(appliesPerClick = cityApplies/cityClicks, clicksPerPosting = cityClicks/jobPostings)
+            jobPostings = n())%>%
+  inner_join(cityUnemployment,by = c("city"="City","admin1"="State"))%>%
+  mutate(appliesPerClick = cityApplies/cityClicks, 
+         clicksPerPosting = cityClicks/jobPostings)
   
   
 ```
+
 
 ```{r}
 #summarizes state click info
