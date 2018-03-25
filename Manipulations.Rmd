@@ -157,12 +157,19 @@ indeedState <- indeedState %>%
 ```{r}
 indeedCity <- indeedCityRaw %>%
   # left_join(intAccEnhanced,by = c("city"="City")) %>%
-  mutate(jobsPerUnemployed = jobPostings/unemployedPop) %>%
-  mutate(unemploymentRate = unemployedPop/popInLaborForce)
+  mutate(jobsPerUnemployed = jobPostings/unemployedPop) 
+# %>%
+#   mutate(unemploymentRate = unemployedPop/popInLaborForce)
 
 indeedCity <- indeedCity[indeedCity$unemployedPop!=0,]
 
 ```
+
+```{r}
+# Filtering for visualization
+# filtIndeedCity <- 
+```
+
 
 ```{r}
 write_csv(indeedCity,"indeedCity.csv")
