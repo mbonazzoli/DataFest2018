@@ -117,51 +117,11 @@ indeedState<-indeedStateRaw%>%
           clicksPerImpoverished = stateClicks/(statePopulation*statePoverty))
 ```
 
+```{r}
+# Modifying internet access by city data to extrapolate to 2016
+# internetAccess2016 <- internetAccess %>%
+#   transmute(percHouseWithInt = 
+#               substr(percentHouseholdWithIntAcc, 0, length(percentHouseholdWithIntAcc)-2))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  # mutate(expectedInternetUse = (1-((1-percHouseWithInt)/2)))
+```
