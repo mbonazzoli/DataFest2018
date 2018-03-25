@@ -132,5 +132,12 @@ indeedState <- indeedState %>%
 ```{r}
 # Modifying internet access by city data to extrapolate to 2016
 internetAccess2016 <- internetAccess %>%
-  mutate(expPercInternetUse = (1-((1- (percentHouseholdsWithIntAcc/100))/2)))
+  mutate(expPercInternetUse = (1-((1- (percentHouseholdsWithIntAcc/100))/2))) %>%
+  separate(`city,State`, into = c("City", "State"), sep = ", ") %>%
+  mutate(City = toupper(City), percentHouseholdsWithIntAcc = percentHouseholdsWithIntAcc/100)
+
+intAccEnhanced <- internetAccess2016 %>%
+  left_join(states, by = c("State"="State")) %>%
+  mutate(State = Abbreviation) %>%
+  select(-Abbreviation)
 ```
