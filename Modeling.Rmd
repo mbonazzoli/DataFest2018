@@ -16,7 +16,13 @@ Indeed exposure
 Internet Access
 
 ```{r}
-clickModel <- lm(stateClicks ~ jobPostings + populationTotal + unemployedPop + unemploymentRate ,data= indeedState)
+clickModel <- lm(stateClicks ~ 0 + jobPostings + populationTotal + unemployedPop,data= indeedState)
+summary(clickModel)
+
+```
+
+```{r}
+clickModel <- lm(cityClicks ~ 0 + jobPostings,data= indeedCity)
 summary(clickModel)
 
 ```
@@ -28,10 +34,10 @@ summary(clickModel)
 ```
 
 ```{r}
-clickModel <- lm(stateClicks ~ jobPostings,data= indeedState)
+clickModel <- lm(stateClicks ~ 0 + jobPostings,data= indeedState)
 summary(clickModel)
-
 ```
+
 
 
 
