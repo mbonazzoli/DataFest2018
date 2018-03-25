@@ -15,28 +15,32 @@ Number of job-seekers
 Indeed exposure
 Internet Access
 
+
 ```{r}
-clickModel <- lm(stateClicks ~ 0 + jobPostings + populationTotal + unemployedPop,data= indeedState)
-summary(clickModel)
+clickModelBasic <- lm(cityClicks ~ 0 + jobPostings,data= indeedCity)
+summary(clickModelBasic)
 
 ```
 
 ```{r}
-clickModel <- lm(cityClicks ~ 0 + jobPostings,data= indeedCity)
+clickModel <- lm(cityClicks ~jobPostings + unemployedPop + jobsPerUnemployed,data= indeedCity)
+clickResid <- resid(clickModel)
 summary(clickModel)
+# clickModel$residuals
+resids <- as.data.frame(clickModel$residuals)
+fit <- as.data.frame(clickModel$fitted.values)
+
+model <- cbind(fit,resids)
+colnames(model) <- c("Prediction","Residual")
+
+indeedCity <- indeedCity %>%
+  bind_cols(model)
+
+
 
 ```
 
-```{r}
-clickModel <- lm(cityClicks ~ jobPostings + unemployedPop + populationTotal,data= indeedCity)
-summary(clickModel)
 
-```
-
-```{r}
-clickModel <- lm(stateClicks ~ 0 + jobPostings,data= indeedState)
-summary(clickModel)
-```
 
 
 

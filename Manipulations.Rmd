@@ -139,7 +139,8 @@ indeedState <- indeedState %>%
 ```{r}
 indeedCity <- indeedCityRaw %>%
   # left_join(intAccEnhanced,by = c("city"="City")) %>%
-  mutate(jobsPerUnemployed = jobPostings/unemployedPop)
+  mutate(jobsPerUnemployed = jobPostings/unemployedPop) %>%
+  mutate(unemploymentRate = unemployedPop/popInLaborForce)
 
 indeedCity <- indeedCity[indeedCity$unemployedPop!=0,]
 
