@@ -28,7 +28,7 @@ summary(clickModel)
 ```
 
 ```{r}
-clickModel <- lm(stateClicks ~ jobPostings + jobsPerUnemployed + populationTotal,data= indeedState)
+clickModel <- lm(cityClicks ~ jobPostings + unemployedPop + populationTotal,data= indeedCity)
 summary(clickModel)
 
 ```

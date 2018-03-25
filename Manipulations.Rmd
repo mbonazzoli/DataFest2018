@@ -76,14 +76,19 @@ sumJobs <- simplifiedIndeed %>%
   summarize(totalClicks = sum(clicks),totalApplies = sum(applies),days = n())
 ```
 
-TODO
 ```{r}
 #summarizes state click info
 sumCity <-sumJobs %>%
+  mutate(city = toupper(city)) %>%
+  inner_join(cityUnemployment,by = c("city"="City"))%>%
   group_by(admin1,city) %>%
-  summarise(cityClicks = sum(totalClicks),cityApplies = sum(totalApplies),jobPostings = n()) %>%
-  mutate(appliesPerClick = cityApplies/cityClicks, clicksPerPosting = cityClicks/jobPostings)%>%
-  mutate(city = toupper(city))
+  summarise(cityClicks = sum(totalClicks),
+            cityApplies = sum(totalApplies),
+            jobPostings = n(),
+            populationTotal = sum(populationTotal),
+            popInLaborForce = sum(popInLaborForce),
+            unemployedPop = sum(unemployedPop))%>%
+  mutate(appliesPerClick = cityApplies/cityClicks, clicksPerPosting = cityClicks/jobPostings)
   
   
 ```
@@ -100,8 +105,6 @@ sumState <-sumJobs %>%
 
 ```{r}
 indeedCityRaw <- sumCity %>%
-  inner_join(cityUnemployment,by = c("city"="City"))%>%
-  subset(select=c(-State)) %>%
   rename(State=admin1)
   
 ```
@@ -112,23 +115,6 @@ indeedStateRaw <- sumState %>%
   inner_join(stateUnemployment,by = c("admin1"="State")) %>%
   rename(State = admin1)
 ```
-
-
-Data Manipulations
-```{r}
-indeedState <- indeedState %>%
-  mutate(jobsPerUnemployed = jobPostings/unemployedPop)
-```
-
-```{r}
-indeedCity <- indeedCityRaw %>%
-  mutate(jobsPerUnemployed = jobPostings/unemployedPop)
-
-
-
-
-```
-
 
 ```{r}
 # Modifying internet access by city data to extrapolate to 2016
@@ -142,3 +128,27 @@ intAccEnhanced <- internetAccess2016 %>%
   mutate(State = Abbreviation) %>%
   select(-Abbreviation)
 ```
+
+
+Data Manipulations
+```{r}
+indeedState <- indeedState %>%
+  mutate(jobsPerUnemployed = jobPostings/unemployedPop)
+```
+
+```{r}
+indeedCity <- indeedCityRaw %>%
+  # left_join(intAccEnhanced,by = c("city"="City")) %>%
+  mutate(jobsPerUnemployed = jobPostings/unemployedPop)
+
+indeedCity <- indeedCity[indeedCity$unemployedPop!=0,]
+
+```
+
+```{r}
+write_csv(indeedCity,"indeedCity.csv")
+```
+
+
+
+
