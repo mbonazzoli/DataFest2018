@@ -71,17 +71,19 @@ simplifiedIndeed <- indeedData %>%
 
 ```{r}
 #Summarizes by job postings
-sumJobs <- simplifiedIndeed %>%
+sumJobs <- simplifiedIndeed %>% 
   group_by(jobHash, admin1,city)%>%
-  summarize(totalClicks = sum(clicks),totalApplies = sum(applies),count = n())
+  summarize(totalClicks = sum(clicks),totalApplies = sum(applies),days = n())
 ```
 
+TODO
 ```{r}
 #summarizes state click info
 sumCity <-sumJobs %>%
   group_by(admin1,city) %>%
-  summarise(stateClicks = sum(totalClicks),stateApplies = sum(totalApplies),jobPostings = sum(count)) %>%
-  mutate(appliesPerClick = stateApplies/stateClicks, clicksPerPosting = stateClicks/jobPostings)
+  summarise(cityClicks = sum(totalClicks),cityApplies = sum(totalApplies),jobPostings = n()) %>%
+  mutate(appliesPerClick = cityApplies/cityClicks, clicksPerPosting = cityClicks/jobPostings)%>%
+  mutate(city = toupper(city))
   
   
 ```
@@ -90,26 +92,15 @@ sumCity <-sumJobs %>%
 #summarizes state click info
 sumState <-sumJobs %>%
   group_by(admin1) %>%
-  summarise(stateClicks = sum(totalClicks),stateApplies = sum(totalApplies),jobPostings = sum(count)) %>%
+  summarise(stateClicks = sum(totalClicks),stateApplies = sum(totalApplies),jobPostings = n()) %>%
   mutate(appliesPerClick = stateApplies/stateClicks, clicksPerPosting = stateClicks/jobPostings)
   
   
 ```
 
-```
-# census data grouped by state and summarized for population, empoloyment,
-# unemployment, income,  and poverty
-stateCensus2015 <- tempCensus2015 %>%
-  group_by(State) %>%
-  summarise(statePopulation = sum(TotalPop), 
-            avgMedIncome = sum((Income*TotalPop)/statePopulation), 
-            statePoverty = sum((Poverty*TotalPop)/statePopulation), 
-            stateUnemployment = sum((Unemployment*TotalPop)/statePopulation)) %>%
-  inner_join(states, by = c("State"="State"))
-```
 ```{r}
 indeedCityRaw <- sumCity %>%
-  left_join(cityUnemployment,by = c("city"="City"))%>%
+  inner_join(cityUnemployment,by = c("city"="City"))%>%
   subset(select=c(-State)) %>%
   rename(State=admin1)
   
@@ -129,7 +120,14 @@ indeedState <- indeedState %>%
   mutate(jobsPerUnemployed = jobPostings/unemployedPop)
 ```
 
+```{r}
+indeedCity <- indeedCityRaw %>%
+  mutate(jobsPerUnemployed = jobPostings/unemployedPop)
 
+
+
+
+```
 
 
 
